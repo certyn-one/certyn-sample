@@ -36,6 +36,9 @@
     return '<a href="' + href + '" class="' + active.trim() + '">' + svg(id) + "<span>" + label + "</span>" + c + "</a>";
   }
 
+  var session = (window.DEMO && window.DEMO.getSession && window.DEMO.getSession()) || null;
+  var who = session || { name: "Guest", email: "Not signed in" };
+
   var sidebar = document.getElementById("sidebar");
   if (sidebar) {
     sidebar.innerHTML =
@@ -55,8 +58,8 @@
       "</div></div>" +
       '<div class="grow"></div>' +
       '<div class="usercard">' +
-        '<div class="avatar sm" style="background:' + window.NW.avatarColor("Alex Rivera") + '">AR</div>' +
-        '<div class="who"><div class="n">Alex Rivera</div><div class="e">qa.tester@acme.example</div></div>' +
+        '<div class="avatar sm" style="background:' + window.NW.avatarColor(who.name) + '">' + window.NW.initials(who.name) + "</div>" +
+        '<div class="who"><div class="n">' + who.name + '</div><div class="e">' + who.email + "</div></div>" +
       "</div>";
   }
 
@@ -71,6 +74,9 @@
       "</form>" +
       '<div class="spacer"></div>' +
       '<div class="iconbtn" role="img" aria-label="Notifications">' + svg("bell") + '<span class="dot"></span></div>' +
-      '<div class="avatar sm" style="background:' + window.NW.avatarColor("Alex Rivera") + '">AR</div>';
+      (session
+        ? '<div class="avatar sm" title="' + who.email + '" style="background:' + window.NW.avatarColor(who.name) + '">' + window.NW.initials(who.name) + "</div>" +
+          '<button class="btn ghost" data-signout style="padding:6px 12px">Sign out</button>'
+        : '<a class="btn ghost" href="login.html" style="padding:6px 14px">Sign in</a>');
   }
 })();

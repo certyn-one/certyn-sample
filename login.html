@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign in — Northwind Commerce</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+  <link rel="icon" href="assets/logo.svg" />
+  <script src="assets/config.js"></script>
+</head>
+<body class="auth-page">
+  <main class="auth-wrap">
+    <div class="auth-card">
+      <div class="brand"><img src="assets/logo.svg" alt="" /><strong>Northwind</strong></div>
+      <h1>Sign in to your store</h1>
+      <div class="sub">Merchant Admin</div>
+      <form id="login-form" novalidate>
+        <div class="field">
+          <label for="login-username">Email</label>
+          <input type="email" id="login-username" name="username" autocomplete="username" />
+        </div>
+        <div class="field">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" name="password" autocomplete="current-password" />
+        </div>
+        <button type="submit" class="btn" style="width:100%; justify-content:center">Sign in</button>
+        <div class="toast" id="login-toast"></div>
+      </form>
+    </div>
+
+    <!-- Demo/staging convenience: test accounts for exercising the login scenarios. -->
+    <div class="auth-card" style="margin-top:16px">
+      <div class="card-h"><h2>Test accounts</h2><span class="meta">demo only</span></div>
+      <div class="tablewrap">
+      <table>
+        <thead><tr><th>Email</th><th>Password</th><th>Scenario</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">qa.tester@acme.example</td><td class="mono">Acme-QA-2026!</td><td><span class="badge green">Owner · signs in</span></td></tr>
+          <tr><td class="mono">demo@northwind.shop</td><td class="mono">Demo1234!</td><td><span class="badge green">Staff · signs in</span></td></tr>
+          <tr><td class="mono">locked@northwind.shop</td><td class="mono">Locked1234!</td><td><span class="badge amber">Locked · rejected</span></td></tr>
+          <tr><td class="mono">any other / wrong password</td><td class="mono">—</td><td><span class="badge red">Rejected</span></td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </main>
+  <script src="assets/app.js" defer></script>
+</body>
+</html>

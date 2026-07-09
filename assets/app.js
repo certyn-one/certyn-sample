@@ -137,24 +137,52 @@
     });
   }
 
-  // ── Account: login + private area ───────────────────────────────────────────
+  // ── Login page (login.html) ─────────────────────────────────────────────────
   var loginForm = $("login-form");
   if (loginForm) {
+    var accounts = (window.DEMO && window.DEMO.accounts) || [];
+    var fail = function (msg) { var t = $("login-toast"); t.className = "toast bad show"; t.textContent = msg; };
     loginForm.addEventListener("submit", function (e) {
       e.preventDefault();
-      var u = ($("login-username") || {}).value, p = ($("login-password") || {}).value;
-      var creds = (window.DEMO && window.DEMO.auth) || {};
-      var valid = u === creds.username && p === creds.password;
-      // Defect #13 (broken auth): when defects are on, ANY credentials are accepted.
-      if (BUGS || valid) {
-        $("login-view").style.display = "none";
-        $("account-view").style.display = "";
-        if (!BUGS) { var ts = $("txn-search"); if (ts) ts.setAttribute("aria-label", "Find a transaction"); }
-      } else {
-        var t = $("login-toast"); t.className = "toast bad show"; t.textContent = "Sign in failed. Check your credentials.";
+      var email = (($("login-username") || {}).value || "").trim();
+      var pw = ($("login-password") || {}).value || "";
+      if (!email || !pw) { fail("Enter both your email and password."); return; }
+      var acct = accounts.filter(function (a) { return a.email.toLowerCase() === email.toLowerCase(); })[0];
+      if (!acct || acct.password !== pw) {
+        // Defect #13 (security, user enumeration): distinct messages reveal which emails exist.
+        // A safe login returns one generic message for both cases (the ?clean behavior).
+        if (BUGS) fail(!acct ? "We couldn't find an account for that email." : "That password is incorrect.");
+        else fail("Incorrect email or password.");
+        return;
       }
+      if (acct.status === "locked") { fail("This account is locked. Contact support to unlock it."); return; }
+      window.DEMO.setSession({ email: acct.email, name: acct.name, role: acct.role });
+      location.href = "account.html";
     });
   }
+
+  // ── Account: session-gated private area (account.html) ──────────────────────
+  var accountView = $("account-view");
+  if (accountView) {
+    var sess = window.DEMO.getSession && window.DEMO.getSession();
+    if (!sess) {
+      location.replace("login.html");
+    } else {
+      accountView.style.display = "";
+      if ($("account-who")) $("account-who").textContent = sess.name + " · " + sess.role;
+      // In clean mode the auth-gated transaction search gets a proper accessible name (defect #1).
+      if (!BUGS) { var ts = $("txn-search"); if (ts) ts.setAttribute("aria-label", "Find a transaction"); }
+    }
+  }
+
+  // ── Sign out (delegated; the button may live in injected chrome) ─────────────
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest ? e.target.closest("#signout, [data-signout]") : null;
+    if (!t) return;
+    e.preventDefault();
+    window.DEMO.clearSession();
+    location.href = "login.html";
+  });
 
   // ── Search results (?q=) ────────────────────────────────────────────────────
   var results = $("search-results");

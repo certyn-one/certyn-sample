@@ -42,10 +42,18 @@ paths are served verbatim.
 | 10 | `GET /api/orders/ORD-7777.json` | Returns another customer's confidential order (Globex, private notes) — IDOR | security | Pen-Test |
 | 11 | `search.html?q=…` | Query reflected into the DOM unescaped (`innerHTML`) — DOM-based XSS | security | Pen-Test |
 | 12 | `go.html?to=…` | Redirects to any external URL with no allowlist — open redirect | security | Pen-Test |
-| 13 | `account.html` sign-in | Accepts **any** credentials — broken authentication | security | Pen-Test |
+| 13 | `login.html` sign-in | Distinct errors for unknown email vs wrong password — **user enumeration** | security | Pen-Test |
 
-**Login (valid) credentials** (also used to demo #13's bypass): `qa.tester@acme.example` /
-`Acme-QA-2026!`.
+**Login flow.** [`login.html`](login.html) is a working sign-in with a few hardcoded test accounts (a
+panel on the page lists them). Successful sign-in sets a client-side session and unlocks the Account
+area; the scenarios are: valid Owner / valid Staff / **locked** account / wrong password. The planted
+defect (#13) is that, with defects on, the error message reveals whether an email exists.
+
+| Account | Password | Scenario |
+|---|---|---|
+| `qa.tester@acme.example` | `Acme-QA-2026!` | Owner — signs in (also the seeded Certyn `LOGIN_*`) |
+| `demo@northwind.shop` | `Demo1234!` | Staff — signs in |
+| `locked@northwind.shop` | `Locked1234!` | Locked — rejected |
 
 ### Not included (require a live backend)
 
@@ -63,7 +71,7 @@ The target is this deployed site; the **workflows are Processes** you configure 
 1. **Onboard a Project + web Environment**, with the Environment `BaseUrl` set to the deployed URL
    — this app is live at `https://certyn-one.github.io/certyn-sample/`.
 2. **Environment variables** (mark secret): `LOGIN_USERNAME=qa.tester@acme.example`,
-   `LOGIN_PASSWORD=Acme-QA-2026!` — so the agent can sign in for the auth-gated paths.
+   `LOGIN_PASSWORD=Acme-QA-2026!` — so the agent can sign in at `login.html` for the auth-gated paths.
 3. **Create four Processes** mapping to the demo lanes:
    - **Exploratory** — finds #1–#5 (a11y, perf, dark-mode, optimistic save, prompt-injection).
    - **API-Test** — reads `openapi.yaml` and probes `/api/*.json`; finds #6–#9.
@@ -139,7 +147,7 @@ baseline), or a PR preview deploy. No version bump or test authoring — it's a 
 
 ```text
 index.html  orders.html  order.html  customers.html  products.html
-settings.html  account.html  search.html  go.html
+login.html  account.html  settings.html  search.html  go.html
 assets/     styles.css  app.js  layout.js  config.js  logo.svg
 api/        orders.json  orders/summary.json  orders/ORD-1001..1008.json  orders/ORD-7777.json
 openapi.yaml

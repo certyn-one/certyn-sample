@@ -47,3 +47,35 @@ test("global search has an accessible name", async ({ page }) => {
   const name = (await search.getAttribute("aria-label")) || (await search.getAttribute("placeholder"));
   expect(name, "search input needs an accessible name").toBeTruthy();
 });
+
+test("valid credentials reach the account area", async ({ page }) => {
+  await page.goto("/login.html");
+  await page.fill("#login-username", "qa.tester@acme.example");
+  await page.fill("#login-password", "Acme-QA-2026!");
+  await page.getByRole("button", { name: "Sign in" }).click();
+  await expect(page).toHaveURL(/account\.html/);
+  await expect(page.getByText("Signed in as")).toBeVisible();
+});
+
+test("wrong password is rejected", async ({ page }) => {
+  await page.goto("/login.html");
+  await page.fill("#login-username", "qa.tester@acme.example");
+  await page.fill("#login-password", "nope");
+  await page.getByRole("button", { name: "Sign in" }).click();
+  await expect(page.locator("#login-toast")).toBeVisible();
+  await expect(page).toHaveURL(/login\.html/);
+});
+
+// FAILS — security: the login must not reveal whether an email exists (user enumeration).
+test("login gives the same error for unknown email and wrong password", async ({ page }) => {
+  const messageFor = async (email: string, pw: string) => {
+    await page.goto("/login.html");
+    await page.fill("#login-username", email);
+    await page.fill("#login-password", pw);
+    await page.getByRole("button", { name: "Sign in" }).click();
+    return (await page.locator("#login-toast").textContent())?.trim() || "";
+  };
+  const unknownEmail = await messageFor("nobody@northwind.shop", "whatever1");
+  const wrongPassword = await messageFor("qa.tester@acme.example", "whatever1");
+  expect(unknownEmail).toBe(wrongPassword);
+});
