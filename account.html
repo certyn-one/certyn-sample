@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Account — Northwind Commerce</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+  <link rel="icon" href="assets/logo.svg" />
+  <script src="assets/config.js"></script>
+</head>
+<body data-page="account" data-title="Account">
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="main">
+      <header class="topbar" id="topbar"></header>
+      <main class="content">
+
+        <!-- Login gate. Defect #13 (broken auth): the client accepts ANY credentials. -->
+        <div id="login-view" class="auth-wrap">
+          <div class="auth-card">
+            <div class="brand"><img src="assets/logo.svg" alt="" /><strong>Northwind</strong></div>
+            <h1>Sign in to your account</h1>
+            <div class="sub">Access your private account area.</div>
+            <form id="login-form">
+              <div class="field">
+                <label for="login-username">Email</label>
+                <input type="email" id="login-username" name="username" autocomplete="username" />
+              </div>
+              <div class="field">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" name="password" autocomplete="current-password" />
+              </div>
+              <button type="submit" class="btn" style="width:100%; justify-content:center">Sign in</button>
+              <div class="toast" id="login-toast"></div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Protected content, revealed after sign-in.
+             Defect #1 (auth-gated a11y): the transaction search field has no accessible name. -->
+        <div id="account-view" style="display:none">
+          <div class="page-head">
+            <div>
+              <h1>Account</h1>
+              <div class="sub">Your private account area and recent activity.</div>
+            </div>
+            <span class="badge green">Signed in</span>
+          </div>
+          <div class="card">
+            <div class="card-h"><h2>Find a transaction</h2></div>
+            <form class="search" style="max-width:420px" role="search" onsubmit="return false">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="search" id="txn-search" style="border:0;background:transparent;height:auto;padding:0" />
+            </form>
+          </div>
+          <div class="card">
+            <div class="card-h"><h2>Recent activity</h2></div>
+            <div class="timeline">
+              <div class="tl-item"><span class="dot" style="background:var(--green)"></span><div class="body">Statement generated for June<div class="t">2 days ago</div></div></div>
+              <div class="tl-item"><span class="dot" style="background:var(--blue)"></span><div class="body">Payout of <strong>$6,204.18</strong> sent to bank ••4471<div class="t">4 days ago</div></div></div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+  <script src="assets/layout.js" defer></script>
+  <script src="assets/app.js" defer></script>
+</body>
+</html>

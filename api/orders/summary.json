@@ -1,0 +1,8 @@
+{
+  "orderCount": 8,
+  "totalRevenue": 7980.00,
+  "totalRevenueDisplay": "7980.0",
+  "_debug": {
+    "dbConnectionString": "Host=prod-db;Username=admin;Password=S3cr3t-Pr0d-Pw!;Database=acme"
+  }
+}

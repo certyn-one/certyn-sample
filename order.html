@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Order — Northwind Commerce</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+  <link rel="icon" href="assets/logo.svg" />
+  <script src="assets/config.js"></script>
+</head>
+<body data-page="orders" data-title="Orders">
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="main">
+      <header class="topbar" id="topbar"></header>
+      <main class="content">
+        <div class="page-head">
+          <div>
+            <h1>Order <span id="order-id-label" class="mono">…</span></h1>
+            <div class="sub"><a href="orders.html" style="color:var(--primary)">← Back to orders</a></div>
+          </div>
+        </div>
+        <div class="card" style="max-width:560px">
+          <div class="card-h"><h2>Details</h2></div>
+          <div id="order-detail"><p class="note">Loading…</p></div>
+        </div>
+      </main>
+    </div>
+  </div>
+  <script src="assets/layout.js" defer></script>
+  <script src="assets/app.js" defer></script>
+</body>
+</html>

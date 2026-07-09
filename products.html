@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Products — Northwind Commerce</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+  <link rel="icon" href="assets/logo.svg" />
+  <script src="assets/config.js"></script>
+</head>
+<body data-page="products" data-title="Products">
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="main">
+      <header class="topbar" id="topbar"></header>
+      <main class="content">
+        <div class="page-head">
+          <div><h1>Products</h1><div class="sub">Your catalog and inventory.</div></div>
+        </div>
+        <div class="card">
+          <div class="tablewrap">
+            <table>
+              <thead><tr><th>Product</th><th>SKU</th><th>Price</th><th>Stock</th><th>Status</th></tr></thead>
+              <tbody id="products-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  <script src="assets/layout.js" defer></script>
+  <script src="assets/app.js" defer></script>
+  <script>
+    (function () {
+      var rows = [
+        ["Aeron Desk Lamp", "NW-LMP-114", "$89.00", 142, "green", "In stock"],
+        ["Merino Wool Throw", "NW-THR-201", "$120.00", 38, "green", "In stock"],
+        ["Cast Iron Skillet 12\"", "NW-SKL-330", "$64.99", 6, "amber", "Low stock"],
+        ["Ceramic Pour-Over Set", "NW-Cof-045", "$48.50", 0, "red", "Out of stock"],
+        ["Linen Apron", "NW-APR-088", "$34.00", 210, "green", "In stock"],
+        ["Walnut Cutting Board", "NW-CUT-176", "$56.00", 27, "green", "In stock"]
+      ];
+      document.getElementById("products-body").innerHTML = rows.map(function (r) {
+        return "<tr><td><strong>" + r[0] + '</strong></td><td class="muted mono">' + r[1] + '</td><td class="mono">' + r[2] +
+          "</td><td>" + r[3] + '</td><td><span class="badge ' + r[4] + '">' + r[5] + "</span></td></tr>";
+      }).join("");
+    })();
+  </script>
+</body>
+</html>

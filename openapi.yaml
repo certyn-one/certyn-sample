@@ -1,0 +1,86 @@
+openapi: 3.0.3
+info:
+  title: Northwind Commerce API
+  version: "1.0"
+  description: >
+    Documented contract for the Northwind Commerce merchant admin. The demo app ships with
+    intentional violations of this contract (see README) for Certyn to detect.
+servers:
+  - url: "./"
+    description: Relative to this spec's location, so paths resolve under the current app base.
+paths:
+  /api/orders.json:
+    get:
+      summary: List recent orders
+      responses:
+        "200":
+          description: Orders
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [orders]
+                properties:
+                  orders:
+                    type: array
+                    items:
+                      type: object
+                      required: [id, customer, total, currency, placedAt]
+                      properties:
+                        id: { type: string, example: "ORD-1001" }
+                        customer: { type: string, example: "Acme Corp" }
+                        total:
+                          type: number
+                          description: Order total as a numeric value (not a string).
+                          example: 1284.00
+                        currency:
+                          type: string
+                          description: ISO 4217 currency code. Always present.
+                          example: "USD"
+                        placedAt: { type: string, format: date-time }
+  /api/orders/summary.json:
+    get:
+      summary: Revenue summary for the current account's orders
+      responses:
+        "200":
+          description: Summary
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [orderCount, totalRevenue, totalRevenueDisplay]
+                additionalProperties: false
+                properties:
+                  orderCount: { type: integer, example: 3 }
+                  totalRevenue:
+                    type: number
+                    description: The exact sum of every order's total. Must equal sum(GET /api/orders.json[].total) = 8536.49.
+                    example: 8536.49
+                  totalRevenueDisplay:
+                    type: string
+                    description: A localized currency string with symbol, thousands separator, and two decimals.
+                    example: "$8,536.49"
+  /api/orders/{id}.json:
+    get:
+      summary: Get a single order by id
+      description: Returns the order only if it belongs to the current account; any other id must return 404.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Order
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [id, customer, total, currency]
+                properties:
+                  id: { type: string }
+                  customer: { type: string }
+                  total: { type: number }
+                  currency: { type: string }
+        "404":
+          description: Not found or not owned by the current account

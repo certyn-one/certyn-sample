@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Customers — Northwind Commerce</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+  <link rel="icon" href="assets/logo.svg" />
+  <script src="assets/config.js"></script>
+</head>
+<body data-page="customers" data-title="Customers">
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="main">
+      <header class="topbar" id="topbar"></header>
+      <main class="content">
+        <div class="page-head">
+          <div><h1>Customers</h1><div class="sub">People who have ordered from your store.</div></div>
+        </div>
+        <div class="card">
+          <div class="tablewrap">
+            <table>
+              <thead><tr><th>Customer</th><th>Email</th><th>Orders</th><th>Spent</th><th>Status</th></tr></thead>
+              <tbody id="customers-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  <script src="assets/layout.js" defer></script>
+  <script src="assets/app.js" defer></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var rows = [
+        ["Acme Corp", "ops@acme.example", 12, "$14,204.00", "green", "Active"],
+        ["Wayne Enterprises", "procurement@wayne.example", 8, "$9,880.75", "green", "Active"],
+        ["Umbrella Co", "orders@umbrella.example", 5, "$6,120.00", "green", "Active"],
+        ["Hooli", "billing@hooli.example", 4, "$3,410.00", "amber", "Trial"],
+        ["Globex", "ap@globex.example", 3, "$1,240.50", "green", "Active"],
+        ["Soylent", "hello@soylent.example", 2, "$356.50", "red", "Churned"],
+        ["Initech", "pm@initech.example", 1, "$86.00", "amber", "Trial"]
+      ];
+      var NW = window.NW || {};
+      document.getElementById("customers-body").innerHTML = rows.map(function (r) {
+        var color = NW.avatarColor ? NW.avatarColor(r[0]) : "#888";
+        var init = NW.initials ? NW.initials(r[0]) : "?";
+        return "<tr>" +
+          '<td><span class="who"><span class="avatar sm" style="background:' + color + '">' + init + "</span><span>" + r[0] + "</span></span></td>" +
+          '<td class="muted">' + r[1] + "</td><td>" + r[2] + '</td><td class="mono">' + r[3] + "</td>" +
+          '<td><span class="badge ' + r[4] + '">' + r[5] + "</span></td></tr>";
+      }).join("");
+    })();
+  </script>
+</body>
+</html>

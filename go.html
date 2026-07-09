@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Redirecting — Northwind Commerce</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+  <link rel="icon" href="assets/logo.svg" />
+  <script src="assets/config.js"></script>
+</head>
+<body data-page="dashboard" data-title="Redirecting">
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="main">
+      <header class="topbar" id="topbar"></header>
+      <main class="content">
+        <div class="page-head"><div><h1>Redirecting</h1><div class="sub">Taking you to your destination.</div></div></div>
+        <!-- Defect #12 (open redirect): follows any ?to= URL, including external hosts. -->
+        <div class="card"><p id="redirect-status" class="note">Preparing redirect…</p></div>
+      </main>
+    </div>
+  </div>
+  <script src="assets/layout.js" defer></script>
+  <script src="assets/app.js" defer></script>
+</body>
+</html>

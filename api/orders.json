@@ -1,0 +1,12 @@
+{
+  "orders": [
+    { "id": "ORD-1001", "customer": "Acme Corp", "status": "paid", "total": "1284.00", "placedAt": "2026-06-14T23:30:00Z" },
+    { "id": "ORD-1002", "customer": "Globex", "status": "fulfilled", "total": "412.50", "placedAt": "2026-06-15T01:05:00Z" },
+    { "id": "ORD-1003", "customer": "Initech", "status": "pending", "total": "86.00", "placedAt": "2026-06-15T08:40:00Z" },
+    { "id": "ORD-1004", "customer": "Umbrella Co", "status": "paid", "total": "2450.00", "placedAt": "2026-06-15T14:12:00Z" },
+    { "id": "ORD-1005", "customer": "Soylent", "status": "refunded", "total": "178.25", "placedAt": "2026-06-16T09:03:00Z" },
+    { "id": "ORD-1006", "customer": "Hooli", "status": "paid", "total": "940.00", "placedAt": "2026-06-16T18:47:00Z" },
+    { "id": "ORD-1007", "customer": "Wayne Enterprises", "status": "fulfilled", "total": "3120.75", "placedAt": "2026-06-17T11:20:00Z" },
+    { "id": "ORD-1008", "customer": "Stark Industries", "status": "pending", "total": "64.99", "placedAt": "2026-06-17T16:55:00Z" }
+  ]
+}

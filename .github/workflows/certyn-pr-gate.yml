@@ -1,0 +1,59 @@
+name: Certyn PR Gate
+
+# Blocks a PR from merging when Certyn finds failing or blocked checks.
+# Runs on every PR to main, focused on the PR's changed areas.
+#
+# Assumes a reachable, non-production target for the PR — either a `staging` Certyn
+# environment or a PR preview deploy. For this demo, add a `staging` environment in Certyn
+# whose Base URL points at the deployed site (or its ?clean variant for a green baseline).
+#
+# Uses the same config as certyn-ci.yml:
+#   Secret   CERTYN_API_KEY        (scopes: process:execute, ci:trigger, ci:status, ci:cancel)
+#   Variable CERTYN_PROJECT_SLUG
+#   Variable CERTYN_API_URL        (optional; defaults to https://api.certyn.io)
+
+on:
+  pull_request:
+    branches: [main]
+
+# Cancel superseded runs when a PR is updated.
+concurrency:
+  group: certyn-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  certyn-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # need the base commit to diff the PR
+      - name: Summarize PR changes
+        id: rel
+        run: |
+          BASE="${{ github.event.pull_request.base.sha }}"
+          {
+            echo "changes<<CHANGES_EOF"
+            echo "Commits:"
+            git log --no-merges --pretty='- %s' "${BASE}..HEAD" | head -20
+            echo "Changed files:"
+            git diff --name-only "${BASE}" HEAD | head -40
+            echo "CHANGES_EOF"
+          } >> "$GITHUB_OUTPUT"
+      - name: Certyn smoke gate
+        uses: certyn-one/action@v1
+        with:
+          api_key: ${{ secrets.CERTYN_API_KEY }}
+          project_slug: ${{ vars.CERTYN_PROJECT_SLUG }}
+          environment_key: staging
+          instruction: |
+            Reviewing PR #${{ github.event.pull_request.number }} ("${{ github.event.pull_request.title }}")
+            against the staging environment.
+
+            Changes in this PR:
+            ${{ steps.rel.outputs.changes }}
+
+            Run smoke coverage and focus on the changed areas above. Report any regressions.
+            Do not bump the version or create test cases — this is a pre-merge gate.
+          fail_on_failed: true    # block the merge on any failed check
+          fail_on_blocked: true   # block if the target could not be reached / tested

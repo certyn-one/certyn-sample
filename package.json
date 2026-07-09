@@ -1,0 +1,13 @@
+{
+  "name": "northwind-commerce-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Northwind Commerce — Certyn demo target app + Playwright E2E",
+  "scripts": {
+    "serve": "python3 -m http.server 8000",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0"
+  }
+}

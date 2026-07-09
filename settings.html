@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Settings — Northwind Commerce</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+  <link rel="icon" href="assets/logo.svg" />
+  <script src="assets/config.js"></script>
+</head>
+<body data-page="settings" data-title="Settings">
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="main">
+      <header class="topbar" id="topbar"></header>
+      <main class="content">
+        <div class="page-head">
+          <div>
+            <h1>Settings</h1>
+            <div class="sub">Manage your store profile and preferences.</div>
+          </div>
+        </div>
+
+        <form id="settings-form" style="max-width:720px">
+          <div class="card">
+            <div class="card-h"><h2>Store profile</h2></div>
+            <div class="form-grid">
+              <div class="field">
+                <label for="display-name">Store name</label>
+                <input type="text" id="display-name" name="displayName" value="Acme Corp" />
+              </div>
+              <div class="field">
+                <label for="store-url">Store URL</label>
+                <input type="text" id="store-url" value="acme.northwind.shop" disabled />
+                <div class="hint">Contact support to change your store URL.</div>
+              </div>
+              <div class="field">
+                <label for="support-email">Support email</label>
+                <input type="email" id="support-email" value="support@acme.example" />
+              </div>
+              <div class="field">
+                <label for="timezone">Timezone</label>
+                <select id="timezone">
+                  <option>America/New_York</option>
+                  <option>America/Chicago</option>
+                  <option>America/Los_Angeles</option>
+                  <option>Europe/London</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="currency">Default currency</label>
+                <select id="currency"><option>USD — US Dollar</option><option>EUR — Euro</option><option>GBP — Pound</option></select>
+              </div>
+              <div class="field">
+                <label for="plan">Plan</label>
+                <input type="text" id="plan" value="Pro — $79 / month" disabled />
+              </div>
+            </div>
+            <div class="actions">
+              <button type="submit" class="btn">Save changes</button>
+              <span class="muted">Last saved 2 days ago</span>
+            </div>
+            <div class="toast" id="save-toast"></div>
+          </div>
+        </form>
+      </main>
+    </div>
+  </div>
+  <script src="assets/layout.js" defer></script>
+  <script src="assets/app.js" defer></script>
+</body>
+</html>

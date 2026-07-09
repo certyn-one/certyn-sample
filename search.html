@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Search — Northwind Commerce</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+  <link rel="icon" href="assets/logo.svg" />
+  <script src="assets/config.js"></script>
+</head>
+<body data-page="dashboard" data-title="Search">
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="main">
+      <header class="topbar" id="topbar"></header>
+      <main class="content">
+        <div class="page-head">
+          <div>
+            <h1>Search results</h1>
+            <div class="sub">Showing matches for <span id="search-term">your query</span>.</div>
+          </div>
+        </div>
+        <div class="card">
+          <form class="search" style="max-width:460px" role="search" method="get" action="search.html">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="search" id="search-echo" name="q" aria-label="Search" style="border:0;background:transparent;height:auto;padding:0" />
+          </form>
+        </div>
+        <!-- Defect #11 (reflected / DOM XSS): the query is written into the DOM without encoding. -->
+        <div class="card"><div id="search-results" class="note">No results.</div></div>
+      </main>
+    </div>
+  </div>
+  <script src="assets/layout.js" defer></script>
+  <script src="assets/app.js" defer></script>
+</body>
+</html>

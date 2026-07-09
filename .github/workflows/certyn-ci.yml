@@ -1,0 +1,83 @@
+name: Certyn CI
+
+# Demonstrates two Certyn CI surfaces against this app:
+#   1) certyn-run     — trigger a Certyn run + bump the environment version (certyn-one/action).
+#   2) playwright     — run your own Playwright E2E and upload the results into Certyn.
+#
+# Configure once in repo settings:
+#   Secrets:   CERTYN_API_KEY   (scopes: process:execute, ci:trigger, ci:status, ci:cancel, ci:results)
+#   Variables: CERTYN_PROJECT_SLUG   (e.g. northwind-commerce)
+#              CERTYN_API_URL        (optional; defaults to https://api.certyn.io)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  # 1) Trigger a Certyn run against the deployed environment and bump its version.
+  #    The agent tests the environment's configured Base URL (your GitHub Pages site).
+  certyn-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # need history to diff against the previous deploy
+      - name: Compute version + changes
+        id: rel
+        run: |
+          SHORT=$(git rev-parse --short HEAD)
+          echo "version=1.1.${GITHUB_RUN_NUMBER}+${SHORT}" >> "$GITHUB_OUTPUT"
+          # Diff against the previous pushed commit; fall back to the parent commit.
+          BASE="${{ github.event.before }}"
+          if [ -z "$BASE" ] || ! git cat-file -e "${BASE}^{commit}" 2>/dev/null; then BASE="HEAD~1"; fi
+          {
+            echo "changes<<CHANGES_EOF"
+            echo "Commits:"
+            git log --no-merges --pretty='- %s' "${BASE}..HEAD" | head -20
+            echo "Changed files:"
+            git diff --name-only "${BASE}" HEAD | head -40
+            echo "CHANGES_EOF"
+          } >> "$GITHUB_OUTPUT"
+      - name: Run Certyn + bump version
+        uses: certyn-one/action@v1
+        with:
+          api_key: ${{ secrets.CERTYN_API_KEY }}
+          project_slug: ${{ vars.CERTYN_PROJECT_SLUG }}
+          environment_key: production
+          instruction: |
+            We deployed version ${{ steps.rel.outputs.version }} (commit ${{ github.sha }}) to production.
+            Bump the production environment version to ${{ steps.rel.outputs.version }}.
+
+            Changes in this release:
+            ${{ steps.rel.outputs.changes }}
+
+            Run smoke coverage, then focus exploration on the changed areas above and check
+            the orders and account pages for regressions. For any changed area that lacks
+            coverage, propose and save new test cases — skip anything already covered.
+          fail_on_failed: false   # demo: surface findings without failing the pipeline
+
+  # 2) Run Playwright E2E, then upload the JSON report into Certyn (Automation ingestion).
+  playwright:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npx playwright install --with-deps chromium
+      - name: Run Playwright (writes playwright-report.json)
+        run: npx playwright test || true   # planted bugs make some specs fail on purpose
+      - name: Upload results to Certyn
+        if: always()
+        env:
+          CERTYN_API_KEY: ${{ secrets.CERTYN_API_KEY }}
+          CERTYN_API_URL: ${{ vars.CERTYN_API_URL || 'https://api.certyn.io' }}
+          CERTYN_PROJECT_SLUG: ${{ vars.CERTYN_PROJECT_SLUG }}
+        run: |
+          curl -sS --fail-with-body -X POST \
+            "$CERTYN_API_URL/api/ci/results?projectSlug=$CERTYN_PROJECT_SLUG&suite=playwright-e2e&suiteName=Playwright%20E2E&environmentKey=production&format=playwright&commitSha=$GITHUB_SHA&ref=$GITHUB_REF_NAME&event=$GITHUB_EVENT_NAME&externalUrl=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+            -H "X-API-Key: $CERTYN_API_KEY" \
+            -H "Idempotency-Key: $GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
+            --data-binary @playwright-report.json
