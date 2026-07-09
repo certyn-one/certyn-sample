@@ -1,6 +1,6 @@
 # Northwind Commerce — Certyn demo target
 
-A small, real-looking **merchant admin** web app used to demonstrate [Certyn](https://certyn.ai)
+A small, real-looking **merchant admin** web app used to demonstrate [Certyn](https://certyn.io)
 finding real bugs. It is a plain static site (HTML/CSS/JS + static JSON) deployable to GitHub
 Pages — no server, no build step. It ships with a curated spread of **intentional defects** across
 accessibility, performance, styling, functional, network, API contract/data, and security, so each
