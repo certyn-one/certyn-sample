@@ -27,11 +27,12 @@
         <div class="toast" id="login-toast"></div>
       </form>
     </div>
+  </main>
 
-    <!-- Demo/staging convenience: test accounts for exercising the login scenarios. -->
-    <div class="auth-card" style="margin-top:16px">
-      <div class="card-h"><h2>Test accounts</h2><span class="meta">demo only</span></div>
-      <div class="tablewrap">
+  <!-- Demo/staging convenience: test accounts, hidden behind the "?" so the login stays a real wall. -->
+  <div class="demo-accounts card" id="demo-accounts" role="dialog" aria-label="Demo accounts">
+    <div class="card-h"><h2>Demo accounts</h2><span class="meta">for testing only</span></div>
+    <div class="tablewrap">
       <table>
         <thead><tr><th>Email</th><th>Password</th><th>Scenario</th></tr></thead>
         <tbody>
@@ -41,9 +42,29 @@
           <tr><td class="mono">any other / wrong password</td><td class="mono">—</td><td><span class="badge red">Rejected</span></td></tr>
         </tbody>
       </table>
-      </div>
     </div>
-  </main>
+  </div>
+  <div class="help-fab">
+    <button class="iconbtn" id="demo-help" aria-label="Show demo accounts" aria-expanded="false" title="Demo accounts">?</button>
+  </div>
+
   <script src="assets/app.js" defer></script>
+  <script>
+    (function () {
+      var btn = document.getElementById("demo-help");
+      var panel = document.getElementById("demo-accounts");
+      btn.addEventListener("click", function () {
+        var open = panel.classList.toggle("show");
+        btn.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+      // Close when clicking outside the panel/button.
+      document.addEventListener("click", function (e) {
+        if (!panel.classList.contains("show")) return;
+        if (panel.contains(e.target) || btn.contains(e.target)) return;
+        panel.classList.remove("show");
+        btn.setAttribute("aria-expanded", "false");
+      });
+    })();
+  </script>
 </body>
 </html>

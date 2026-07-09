@@ -44,10 +44,11 @@ paths are served verbatim.
 | 12 | `go.html?to=…` | Redirects to any external URL with no allowlist — open redirect | security | Pen-Test |
 | 13 | `login.html` sign-in | Distinct errors for unknown email vs wrong password — **user enumeration** | security | Pen-Test |
 
-**Login flow.** [`login.html`](login.html) is a working sign-in with a few hardcoded test accounts (a
-panel on the page lists them). Successful sign-in sets a client-side session and unlocks the Account
-area; the scenarios are: valid Owner / valid Staff / **locked** account / wrong password. The planted
-defect (#13) is that, with defects on, the error message reveals whether an email exists.
+**Login flow.** [`login.html`](login.html) is a working sign-in wall backed by a few hardcoded test
+accounts (revealed behind the floating **"?"** helper, so the page still reads as a real login).
+Successful sign-in sets a client-side session and unlocks the Account area; the scenarios are: valid
+Owner / valid Staff / **locked** account / wrong password. The planted defect (#13) is that, with
+defects on, the error message reveals whether an email exists.
 
 | Account | Password | Scenario |
 |---|---|---|

@@ -255,7 +255,13 @@ input:disabled { background: var(--surface-2); color: var(--text-3); }
 
 /* Auth */
 .auth-page { min-height: 100vh; padding: 24px; }
-.auth-wrap { max-width: 460px; margin: 6vh auto 0; }
+.auth-wrap { max-width: 400px; margin: 8vh auto 0; }
+
+/* Demo-accounts helper: hidden behind a floating "?" so the login stays a real wall. */
+.help-fab { position: fixed; right: 20px; bottom: 20px; z-index: 50; }
+#demo-help { width: 42px; height: 42px; font-size: 19px; font-weight: 700; box-shadow: var(--shadow); }
+.demo-accounts { position: fixed; right: 20px; bottom: 74px; z-index: 50; width: min(460px, calc(100vw - 40px)); display: none; }
+.demo-accounts.show { display: block; }
 .auth-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--shadow); padding: 26px; }
 .auth-card .brand { display: flex; align-items: center; gap: 10px; justify-content: center; margin-bottom: 6px; }
 .auth-card .brand img { width: 30px; height: 30px; }
