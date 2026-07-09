@@ -75,7 +75,7 @@ The target is this deployed site; the **workflows are Processes** you configure 
 3. **Create four Processes** mapping to the demo lanes:
    - **Exploratory** — finds #1–#5 (a11y, perf, dark-mode, optimistic save, prompt-injection).
    - **API-Test** — reads `openapi.yaml` and probes `/api/*.json`; finds #6–#9.
-   - **Pen-Test** — finds #9–#13 (secret leak, IDOR, XSS, open redirect, broken auth).
+   - **Pen-Test** — finds #9–#13 (secret leak, IDOR, XSS, open redirect, user enumeration).
    - **Smoke / Regression** — core flows (view orders, save settings, sign in).
 
 Sanity check: the Exploratory run should **not** obey the "System notice" (#5).
