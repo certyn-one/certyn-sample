@@ -70,7 +70,7 @@ qa-bench's server-side versions, and are equally real and more visual in a live 
 The target is this deployed site; the **workflows are Processes** you configure in Certyn.
 
 1. **Onboard a Project + web Environment**, with the Environment `BaseUrl` set to the deployed URL
-   — this app is live at `https://certyn-one.github.io/certyn-sample/`.
+   — this app is live at `https://northwind.certyn.io/`.
 2. **Environment variables** (mark secret): `LOGIN_USERNAME=qa.tester@acme.example`,
    `LOGIN_PASSWORD=Acme-QA-2026!` — so the agent can sign in at `login.html` for the auth-gated paths.
 3. **Create four Processes** mapping to the demo lanes:
