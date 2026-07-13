@@ -6,8 +6,10 @@ name: Certyn CI
 #
 # Configure once in repo settings:
 #   Secrets:   CERTYN_API_KEY   (scopes: process:execute, ci:trigger, ci:status, ci:cancel, ci:results)
-#   Variables: CERTYN_PROJECT_SLUG   (e.g. northwind-commerce)
+#   Variables: CERTYN_PROJECT_SLUG   (e.g. northwind)
 #              CERTYN_API_URL        (optional; defaults to https://api.certyn.io)
+#
+# environment_key is required by certyn-one/action@v1 — every run is tied to an explicit environment.
 
 on:
   push:
