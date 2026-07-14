@@ -77,5 +77,6 @@ jobs:
           curl -sS --fail-with-body -X POST \
             "$CERTYN_API_URL/api/ci/results?projectSlug=$CERTYN_PROJECT_SLUG&suite=playwright-e2e&suiteName=Playwright%20E2E&environmentKey=production&format=playwright&commitSha=$GITHUB_SHA&ref=$GITHUB_REF_NAME&event=$GITHUB_EVENT_NAME&externalUrl=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
             -H "X-API-Key: $CERTYN_API_KEY" \
+            -H "Content-Type: application/json" \
             -H "Idempotency-Key: $GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
             --data-binary @playwright-report.json
