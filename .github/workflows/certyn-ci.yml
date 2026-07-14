@@ -51,12 +51,8 @@ jobs:
             We deployed version ${{ steps.rel.outputs.version }} (commit ${{ github.sha }}) to production.
             Bump the production environment version to ${{ steps.rel.outputs.version }}.
 
-            Changes in this release:
-            ${{ steps.rel.outputs.changes }}
-
-            Run smoke coverage, then focus exploration on the changed areas above and check
-            the orders and account pages for regressions. For any changed area that lacks
-            coverage, propose and save new test cases — skip anything already covered.
+            Then open the app and confirm the home page loads successfully. Do not run smoke
+            coverage or exploration, and do not create test cases — just verify the app loads.
           fail_on_failed: false   # demo: surface findings without failing the pipeline
 
   # 2) Run Playwright E2E, then upload the JSON report into Certyn (Automation ingestion).
