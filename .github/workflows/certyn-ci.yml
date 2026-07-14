@@ -69,14 +69,13 @@ jobs:
         run: npx playwright test || true   # planted bugs make some specs fail on purpose
       - name: Upload results to Certyn
         if: always()
-        env:
-          CERTYN_API_KEY: ${{ secrets.CERTYN_API_KEY }}
-          CERTYN_API_URL: ${{ vars.CERTYN_API_URL || 'https://api.certyn.io' }}
-          CERTYN_PROJECT_SLUG: ${{ vars.CERTYN_PROJECT_SLUG }}
-        run: |
-          curl -sS --fail-with-body -X POST \
-            "$CERTYN_API_URL/api/ci/results?projectSlug=$CERTYN_PROJECT_SLUG&suite=playwright-e2e&suiteName=Playwright%20E2E&environmentKey=production&format=playwright&commitSha=$GITHUB_SHA&ref=$GITHUB_REF_NAME&event=$GITHUB_EVENT_NAME&externalUrl=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
-            -H "X-API-Key: $CERTYN_API_KEY" \
-            -H "Content-Type: application/json" \
-            -H "Idempotency-Key: $GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
-            --data-binary @playwright-report.json
+        uses: certyn-one/action@v1
+        with:
+          api_key: ${{ secrets.CERTYN_API_KEY }}
+          project_slug: ${{ vars.CERTYN_PROJECT_SLUG }}
+          environment_key: production
+          results_file: playwright-report.json
+          results_format: playwright
+          suite: playwright-e2e
+          suite_name: Playwright E2E
+          fail_on_failed: false   # demo: surface findings without failing the pipeline
