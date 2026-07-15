@@ -54,8 +54,15 @@ jobs:
             We deployed version ${{ steps.rel.outputs.version }} (commit ${{ github.sha }}) to production.
             Bump the production environment version to ${{ steps.rel.outputs.version }}.
 
-            Then open the app and confirm the home page loads successfully. Do not run smoke
-            coverage or exploration, and do not create test cases — just verify the app loads.
+            Triggering commit message:
+            """
+            ${{ github.event.head_commit.message }}
+            """
+
+            Follow the project wiki's "CI commit conventions". In particular, if the commit
+            message above contains a fix(<issue>) marker, retest that issue and update its
+            ticket. Otherwise just confirm the home page loads — no broader exploration or
+            new test cases.
           fail_on_failed: false   # demo: surface findings without failing the pipeline
 
   # 2) Run Playwright E2E, then upload the JSON report into Certyn (Automation ingestion).

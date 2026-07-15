@@ -144,6 +144,24 @@ Runs on every PR to `main` and **blocks the merge** when Certyn finds failing or
 environment — add one in Certyn pointing at the deployed site (or its `?clean` variant for a green
 baseline), or a PR preview deploy. No version bump or test authoring — it's a pre-merge gate.
 
+### 4) Retest-on-fix (Wiki convention, no extra workflow)
+
+Closing the loop after a bug is fixed is **not** a bespoke workflow — the intelligence lives in the
+project Wiki, and the CI just hands the agent the commit message. `certyn-ci.yml` includes the
+triggering commit message in its instruction; the project Wiki's **"CI commit conventions"** section
+tells the agent that a **`fix(<issue>)`** marker means "retest that issue and update its ticket."
+
+```text
+fix(NW-482): correct the customers API endpoint path
+       └── Certyn re-runs NW-482's original reproduction steps against production
+           and marks the ticket resolved (or reopens it if it still fails).
+```
+
+So the ticket → reproduce → fix → verify loop needs no YAML parsing: a Certyn ticket (or the Zendesk /
+tracker id it mirrors) is filed, you fix it and commit `fix(<that id>)`, and the next deploy run reads
+the marker and auto-verifies the fix. Change the convention by editing the Wiki, not the pipeline. The
+Wiki text to add is in [`docs/certyn-wiki.md`](docs/certyn-wiki.md).
+
 ## Layout
 
 ```text
@@ -154,4 +172,5 @@ api/        orders.json  orders/summary.json  orders/ORD-1001..1008.json  orders
 openapi.yaml
 tests/      shop.spec.ts        playwright.config.ts   package.json
 .github/workflows/   pages.yml (deploy)   certyn-ci.yml (run + version + upload)   certyn-pr-gate.yml (PR gate)
+docs/       certyn-wiki.md (project Wiki text: CI commit conventions / retest-on-fix)
 ```
