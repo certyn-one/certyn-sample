@@ -115,26 +115,37 @@ curl -X PUT "$CERTYN_API_URL/api/projects/$PROJECT_ID/environments/$ENV_ID" \
 
 A process whose automation rule has `triggerOnVersionChange: true` then auto-runs on that version change.
 
-### 2) Upload Playwright results (`playwright` job)
+### 2) Upload Playwright results ([`playwright.yml`](.github/workflows/playwright.yml))
 
-Runs the E2E suite in [`tests/`](tests/) and uploads the JSON report to
+A **manually-run** workflow (`workflow_dispatch`) — split out of `certyn-ci.yml` so it no longer
+fires on every push. It runs the E2E suite in [`tests/`](tests/) and uploads the JSON report to
 `POST /api/ci/results?...&format=playwright`. On first upload Certyn auto-creates an **Automation**
 process (`suite=playwright-e2e`) and ingests each test as an execution.
+
+Trigger it from the Actions tab and pick an **outcome**:
+
+| Outcome | What runs | Report |
+| --- | --- | --- |
+| `failing` (default) | the real app with its planted defects | **red** — contract, revenue, a11y, and login-enumeration specs fail on purpose |
+| `passing` | the corrected target (`?clean` + clean API fixtures) | **green** — all 9 specs pass; the job gates on it (`fail_on_failed`) |
+
+The specs assert *correct* behavior and read the `CLEAN` env var (set from the `outcome` input) to
+choose the target — see [`tests/shop.spec.ts`](tests/shop.spec.ts). Static `/api/*.json` defects can't
+be toggled on a static host, so passing mode reads corrected fixtures from
+[`tests/fixtures/clean/`](tests/fixtures/clean/). `format=junit` works the same way for
+Cypress / pytest / JUnit.
 
 ```bash
 curl -X POST "$CERTYN_API_URL/api/ci/results?projectSlug=$SLUG&suite=playwright-e2e&environmentKey=production&format=playwright" \
   -H "X-API-Key: $CERTYN_API_KEY" --data-binary @playwright-report.json
 ```
 
-The specs assert *correct* behavior, so several **fail on purpose** on the planted defects (contract,
-revenue math, a11y) — the failing report is what makes the ingestion demo meaningful. `format=junit`
-works the same way for Cypress / pytest / JUnit.
-
 Run the suite locally:
 
 ```bash
 npm install && npx playwright install chromium
-npx playwright test           # serves the app itself; writes playwright-report.json
+npx playwright test           # red report (planted defects); writes playwright-report.json
+CLEAN=1 npx playwright test    # green report (corrected target)
 ```
 
 ### 3) PR gate ([`certyn-pr-gate.yml`](.github/workflows/certyn-pr-gate.yml))
@@ -170,7 +181,8 @@ login.html  account.html  settings.html  search.html  go.html
 assets/     styles.css  app.js  layout.js  config.js  logo.svg
 api/        orders.json  orders/summary.json  orders/ORD-1001..1008.json  orders/ORD-7777.json
 openapi.yaml
-tests/      shop.spec.ts        playwright.config.ts   package.json
-.github/workflows/   pages.yml (deploy)   certyn-ci.yml (run + version + upload)   certyn-pr-gate.yml (PR gate)
+tests/      shop.spec.ts        playwright.config.ts   package.json   fixtures/clean/ (green-run data)
+.github/workflows/   pages.yml (deploy)   certyn-ci.yml (run + version)   certyn-pr-gate.yml (PR gate)
+                     playwright.yml (manual E2E: passing/failing)
 docs/       certyn-wiki.md (project Wiki text: CI commit conventions / retest-on-fix)
 ```

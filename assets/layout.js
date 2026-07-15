@@ -66,11 +66,13 @@
   var topbar = document.getElementById("topbar");
   if (topbar) {
     // Defect #1 (accessibility): the global search input has no <label>, no aria-label,
-    // and no placeholder — assistive tech announces an unnamed textbox.
+    // and no placeholder — assistive tech announces an unnamed textbox. Under ?clean the
+    // defect is off, so give it a proper accessible name.
+    var searchName = (window.DEMO && window.DEMO.bugsEnabled === false) ? ' aria-label="Search"' : "";
     topbar.innerHTML =
       '<div class="crumb">' + title + "</div>" +
       '<form id="dash-search-form" class="search" role="search">' +
-        svg("search") + '<input type="search" id="dash-search" />' +
+        svg("search") + '<input type="search" id="dash-search"' + searchName + " />" +
       "</form>" +
       '<div class="spacer"></div>' +
       '<div class="iconbtn" role="img" aria-label="Notifications">' + svg("bell") + '<span class="dot"></span></div>' +

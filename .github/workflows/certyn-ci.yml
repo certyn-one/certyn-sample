@@ -1,8 +1,7 @@
 name: Certyn CI
 
-# Demonstrates two Certyn CI surfaces against this app:
-#   1) certyn-run     — trigger a Certyn run + bump the environment version (certyn-one/action).
-#   2) playwright     — run your own Playwright E2E and upload the results into Certyn.
+# Triggers a Certyn run + bumps the environment version on each deploy (certyn-one/action).
+# The Playwright E2E upload lives in its own manually-run workflow (playwright.yml).
 #
 # Configure once in repo settings:
 #   Secrets:   CERTYN_API_KEY   (scopes: process:execute, ci:trigger, ci:status, ci:cancel, ci:results)
@@ -63,29 +62,4 @@ jobs:
             message above contains a fix(<issue>) marker, retest that issue and update its
             ticket. Otherwise just confirm the home page loads — no broader exploration or
             new test cases.
-          fail_on_failed: false   # demo: surface findings without failing the pipeline
-
-  # 2) Run Playwright E2E, then upload the JSON report into Certyn (Automation ingestion).
-  playwright:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - run: npm install
-      - run: npx playwright install --with-deps chromium
-      - name: Run Playwright (writes playwright-report.json)
-        run: npx playwright test || true   # planted bugs make some specs fail on purpose
-      - name: Upload results to Certyn
-        if: always()
-        uses: certyn-one/action@v1
-        with:
-          api_key: ${{ secrets.CERTYN_API_KEY }}
-          project_slug: ${{ vars.CERTYN_PROJECT_SLUG }}
-          environment_key: production
-          results_file: playwright-report.json
-          results_format: playwright
-          suite: playwright-e2e
-          suite_name: Playwright E2E
           fail_on_failed: false   # demo: surface findings without failing the pipeline

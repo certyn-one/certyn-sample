@@ -1,0 +1,56 @@
+name: Playwright E2E
+
+# Manually-run Playwright suite whose results are uploaded into Certyn (Automation ingestion).
+# Split out of certyn-ci.yml so it no longer runs on every push — you trigger it on demand and
+# choose the outcome:
+#
+#   outcome = failing (default) → tests the real app with its planted defects → RED report.
+#                                 Demonstrates Certyn ingesting a customer's failing CI.
+#   outcome = passing           → tests the corrected target (?clean + clean API fixtures) →
+#                                 GREEN report, and the job gates on it (fail_on_failed).
+#
+# Same config as certyn-ci.yml:
+#   Secret   CERTYN_API_KEY        (scopes include ci:results)
+#   Variable CERTYN_PROJECT_SLUG
+#   Variable CERTYN_API_URL        (optional; defaults to https://api.certyn.io)
+
+on:
+  workflow_dispatch:
+    inputs:
+      outcome:
+        description: "Expected result of this run"
+        type: choice
+        options:
+          - failing
+          - passing
+        default: failing
+
+jobs:
+  playwright:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npx playwright install --with-deps chromium
+      - name: Run Playwright (writes playwright-report.json)
+        env:
+          # passing mode sets CLEAN=1, which the specs read to test the corrected target.
+          CLEAN: ${{ inputs.outcome == 'passing' && '1' || '' }}
+        run: npx playwright test || true   # always write a report, even when specs fail
+      - name: Upload results to Certyn
+        if: always()
+        uses: certyn-one/action@v1
+        with:
+          api_key: ${{ secrets.CERTYN_API_KEY }}
+          project_slug: ${{ vars.CERTYN_PROJECT_SLUG }}
+          environment_key: production
+          results_file: playwright-report.json
+          results_format: playwright
+          suite: playwright-e2e
+          suite_name: Playwright E2E
+          # A "passing" run is a gate — fail the job if any test failed. A "failing" run is an
+          # ingestion demo — upload the red report without failing the workflow.
+          fail_on_failed: ${{ inputs.outcome == 'passing' }}
