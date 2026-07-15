@@ -31,25 +31,22 @@
   <script src="assets/layout.js" defer></script>
   <script src="assets/app.js" defer></script>
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      var rows = [
-        ["Acme Corp", "ops@acme.example", 12, "$14,204.00", "green", "Active"],
-        ["Wayne Enterprises", "procurement@wayne.example", 8, "$9,880.75", "green", "Active"],
-        ["Umbrella Co", "orders@umbrella.example", 5, "$6,120.00", "green", "Active"],
-        ["Hooli", "billing@hooli.example", 4, "$3,410.00", "amber", "Trial"],
-        ["Globex", "ap@globex.example", 3, "$1,240.50", "green", "Active"],
-        ["Soylent", "hello@soylent.example", 2, "$356.50", "red", "Churned"],
-        ["Initech", "pm@initech.example", 1, "$86.00", "amber", "Trial"]
-      ];
-      var NW = window.NW || {};
-      document.getElementById("customers-body").innerHTML = rows.map(function (r) {
-        var color = NW.avatarColor ? NW.avatarColor(r[0]) : "#888";
-        var init = NW.initials ? NW.initials(r[0]) : "?";
-        return "<tr>" +
-          '<td><span class="who"><span class="avatar sm" style="background:' + color + '">' + init + "</span><span>" + r[0] + "</span></span></td>" +
-          '<td class="muted">' + r[1] + "</td><td>" + r[2] + '</td><td class="mono">' + r[3] + "</td>" +
-          '<td><span class="badge ' + r[4] + '">' + r[5] + "</span></td></tr>";
-      }).join("");
+    // Customers are loaded from the API (refactored from a hardcoded list — NW-482).
+    (function () {
+      var body = document.getElementById("customers-body");
+      fetch("api/customers-list.json")
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          var NW = window.NW || {};
+          body.innerHTML = data.customers.map(function (c) {
+            var color = NW.avatarColor ? NW.avatarColor(c.name) : "#888";
+            var init = NW.initials ? NW.initials(c.name) : "?";
+            return "<tr>" +
+              '<td><span class="who"><span class="avatar sm" style="background:' + color + '">' + init + "</span><span>" + c.name + "</span></span></td>" +
+              '<td class="muted">' + c.email + "</td><td>" + c.orders + '</td><td class="mono">' + c.spentDisplay + "</td>" +
+              '<td><span class="badge ' + c.badge + '">' + c.status + "</span></td></tr>";
+          }).join("");
+        });
     })();
   </script>
 </body>
