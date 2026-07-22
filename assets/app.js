@@ -54,7 +54,7 @@
           // total may be a number or (per the contract-drift defect) a string.
           var total = o.currency ? esc(o.total) + " " + esc(o.currency) : esc(o.total);
           tr.innerHTML =
-            '<td><a href="order.html?id=' + encodeURIComponent(o.id) + '">' + esc(o.id) + "</a></td>" +
+            '<td><a href="' + window.NW.withFlags("order.html?id=" + encodeURIComponent(o.id)) + '">' + esc(o.id) + "</a></td>" +
             '<td><span class="who">' + avatar(o.customer) + "<span>" + esc(o.customer) + "</span></span></td>" +
             "<td>" + badge(o.status) + "</td>" +
             '<td class="mono">' + total + "</td>" +

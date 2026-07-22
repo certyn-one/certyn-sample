@@ -30,10 +30,18 @@
     return "hsl(" + h + " 52% 48%)";
   };
 
+  // Carry the JPY rollback flag across navigation. The links below are bare hrefs, so
+  // without this the ?JPY param is dropped the moment you leave the landing page and the
+  // address bar no longer shows why the option is visible.
+  window.NW.withFlags = function (href) {
+    if (!window.DEMO || !window.DEMO.jpyEnabled) return href;
+    return href + (href.indexOf("?") === -1 ? "?" : "&") + "JPY";
+  };
+
   function navItem(id, label, href, count) {
     var active = page === id ? " active" : "";
     var c = count != null ? '<span class="count">' + count + "</span>" : "";
-    return '<a href="' + href + '" class="' + active.trim() + '">' + svg(id) + "<span>" + label + "</span>" + c + "</a>";
+    return '<a href="' + window.NW.withFlags(href) + '" class="' + active.trim() + '">' + svg(id) + "<span>" + label + "</span>" + c + "</a>";
   }
 
   var session = (window.DEMO && window.DEMO.getSession && window.DEMO.getSession()) || null;
@@ -79,6 +87,6 @@
       (session
         ? '<div class="avatar sm" title="' + who.email + '" style="background:' + window.NW.avatarColor(who.name) + '">' + window.NW.initials(who.name) + "</div>" +
           '<button class="btn ghost" data-signout style="padding:6px 12px">Sign out</button>'
-        : '<a class="btn ghost" href="login.html" style="padding:6px 14px">Sign in</a>');
+        : '<a class="btn ghost" href="' + window.NW.withFlags("login.html") + '" style="padding:6px 14px">Sign in</a>');
   }
 })();
