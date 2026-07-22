@@ -43,6 +43,7 @@ paths are served verbatim.
 | 11 | `search.html?q=…` | Query reflected into the DOM unescaped (`innerHTML`) — DOM-based XSS | security | Pen-Test |
 | 12 | `go.html?to=…` | Redirects to any external URL with no allowlist — open redirect | security | Pen-Test |
 | 13 | `login.html` sign-in | Distinct errors for unknown email vs wrong password — **user enumeration** | security | Pen-Test |
+| 14 | Settings → Default currency | JPY (Japanese Yen) was added but a stale CSS rule hides the option — it never appears in the picker and can't be selected | functional / styling | Exploratory / Regression |
 
 **Login flow.** [`login.html`](login.html) is a working sign-in wall backed by a few hardcoded test
 accounts (revealed behind the floating **"?"** helper, so the page still reads as a real login).

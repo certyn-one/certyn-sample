@@ -281,6 +281,12 @@ input:disabled { background: var(--surface-2); color: var(--text-3); }
 }
 html.clean .stat .value { color: var(--text) !important; }
 
+/* Defect #14 (functional): Japanese Yen was added to the currency picker, but a
+   leftover rule hides the newly-added option, so the store can never select JPY.
+   ?clean reveals it. */
+#currency option[value="JPY"] { display: none; }
+html.clean #currency option[value="JPY"] { display: revert; }
+
 /* Responsive */
 @media (max-width: 1000px) { .cols-4 { grid-template-columns: repeat(2, 1fr); } .span-2 { grid-column: span 2; } }
 @media (max-width: 860px) {
