@@ -1,0 +1,63 @@
+name: Deploy Fix → Certyn Auto-Retest
+
+# Manually-triggered retest of a fixed Certyn ticket. Pick the issue at dispatch time.
+#
+# Same shape as certyn-ci.yml, but dispatch-only and carrying a fix(<issue>) marker
+# so the wiki's "CI commit conventions" retest-on-fix loop kicks in: Certyn re-runs
+# the ticket's recorded reproduction steps and resolves or keeps the ticket open
+# based on what it observes.
+#
+# Defaults to ticket #1 (the JPY default-currency defect); change the input to retest
+# anything else.
+#
+# Configure once in repo settings (shared with certyn-ci.yml):
+#   Secrets:   CERTYN_API_KEY   (scopes: process:execute, ci:trigger, ci:status, ci:cancel, ci:results)
+#   Variables: CERTYN_PROJECT_SLUG   (e.g. northwind)
+#              CERTYN_API_URL        (optional; defaults to https://api.certyn.io)
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment_key:
+        description: Certyn environment to retest against
+        required: true
+        default: stage
+      issue:
+        description: Ticket to retest (project number, e.g. "#1")
+        required: true
+        default: '#1'
+      version:
+        description: Version to record on the environment (e.g. 2026.3) — blank leaves it unchanged
+        required: false
+        default: ''
+
+jobs:
+  certyn-retest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retest the fixed issue
+        uses: certyn-one/action@v1
+        with:
+          api_key: ${{ secrets.CERTYN_API_KEY }}
+          project_slug: ${{ vars.CERTYN_PROJECT_SLUG }}
+          environment_key: ${{ inputs.environment_key }}
+          # The fix(<issue>) marker is what triggers the retest-on-fix convention.
+          commit_message: |
+            fix(${{ inputs.issue }}): deploy fix and retest
+
+            Fix deployed from ${{ github.ref_name }} at ${{ github.sha }}.
+          instruction: |
+            We deployed commit ${{ github.sha }} to ${{ inputs.environment_key }}.
+            ${{ inputs.version != '' && format('Record the {0} environment version as {1}.', inputs.environment_key, inputs.version) || 'Leave the environment version unchanged.' }}
+
+            Triggering commit message:
+            """
+            fix(${{ inputs.issue }}): deploy fix and retest
+            """
+
+            Follow the project wiki's "CI commit conventions". The commit message above
+            contains a fix(<issue>) marker, so retest that issue against this environment
+            and update its ticket accordingly. Keep it targeted — no broader exploration
+            and no new test cases.
+          fail_on_failed: true    # a still-reproducing blocker should fail the run

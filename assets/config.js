@@ -33,4 +33,22 @@
 
   // Apply the clean flag as early as possible so CSS-driven defects can be overridden.
   if (clean) document.documentElement.classList.add("clean");
+
+  // Rollback switch for the JPY currency defect (#14): append ?JPY to any URL to reveal
+  // the Japanese Yen option in the currency picker; ?JPY=off puts it back. Unlike ?clean
+  // this is sticky for the tab, because the nav links drop the query string — without
+  // that, landing on ?JPY and clicking through to Settings would silently lose the flag.
+  var jpy = null;
+  params.forEach(function (value, key) {
+    if (key.toLowerCase() !== "jpy") return;
+    jpy = !/^(0|off|false|no)$/i.test(value);
+  });
+  try {
+    if (jpy === null) jpy = sessionStorage.getItem("nw_jpy") === "1";
+    else if (jpy) sessionStorage.setItem("nw_jpy", "1");
+    else sessionStorage.removeItem("nw_jpy");
+  } catch (e) { jpy = jpy === true; }
+
+  window.DEMO.jpyEnabled = jpy;
+  if (jpy) document.documentElement.classList.add("jpy");
 })();

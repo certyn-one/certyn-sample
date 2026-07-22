@@ -19,6 +19,12 @@ open http://localhost:8000/
 Append `?clean` to any page URL (e.g. `http://localhost:8000/?clean`) to disable the **client-side**
 defects, for a before/after demo. The static `/api/*.json` defects are always on.
 
+Append `?JPY` to fix **only** defect #14 — the hidden Japanese Yen option — leaving every other
+defect in place. `?JPY=off` rolls it back. Unlike `?clean`, this flag is sticky for the browser tab:
+the nav links drop the query string, so a one-shot param would be lost the moment you clicked
+through to Settings. Land on any page with `?JPY` and the option stays visible until you turn it off
+or close the tab.
+
 ## Deploy (GitHub Pages)
 
 Push this folder to a GitHub repo and enable Pages with **Source: GitHub Actions**. The included
@@ -43,7 +49,7 @@ paths are served verbatim.
 | 11 | `search.html?q=…` | Query reflected into the DOM unescaped (`innerHTML`) — DOM-based XSS | security | Pen-Test |
 | 12 | `go.html?to=…` | Redirects to any external URL with no allowlist — open redirect | security | Pen-Test |
 | 13 | `login.html` sign-in | Distinct errors for unknown email vs wrong password — **user enumeration** | security | Pen-Test |
-| 14 | Settings → Default currency | JPY (Japanese Yen) was added but a stale CSS rule hides the option — it never appears in the picker and can't be selected | functional / styling | Exploratory / Regression |
+| 14 | Settings → Default currency | JPY (Japanese Yen) was added but a stale CSS rule hides the option — it never appears in the picker and can't be selected (`?JPY` fixes just this one) | functional / styling | Exploratory / Regression |
 
 **Login flow.** [`login.html`](login.html) is a working sign-in wall backed by a few hardcoded test
 accounts (revealed behind the floating **"?"** helper, so the page still reads as a real login).

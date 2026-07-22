@@ -286,6 +286,7 @@ html.clean .stat .value { color: var(--text) !important; }
    ?clean reveals it. */
 #currency option[value="JPY"] { display: none; }
 html.clean #currency option[value="JPY"] { display: revert; }
+html.jpy #currency option[value="JPY"] { display: revert; }
 
 /* Responsive */
 @media (max-width: 1000px) { .cols-4 { grid-template-columns: repeat(2, 1fr); } .span-2 { grid-column: span 2; } }
